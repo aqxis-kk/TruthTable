@@ -52,7 +52,9 @@ gx_strfind_2d(const char *__restrict target,
 /**
  * @brief Finds \a target[0:l] in 2D char array \a test[x][y].
  * @param[in] target The string to find, nonnull.
- * @param[in] l The length of string to compare.
+ * @param[in] l
+ * The length of string to compare.\n
+ * The behaviour is undefined if &ge; \a y.
  * @param[in] x The size of array \a test.
  * @param[in] y The size of array \a test[].
  * @param[in] test An array of string to inspect, nonnull.

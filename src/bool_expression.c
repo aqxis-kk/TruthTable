@@ -102,7 +102,7 @@ _bool_expression_register_var(BoolExpression *self, const char *var)
 {
   if (!self || !var) return -1;
   int var_index = gx_strfind_2d(var, self->n_vars,
-                                BOOL_EXPRESSION_VAR_MAX_LENGTH, self->vars);
+                                BOOL_EXPRESSION_VAR_MAX_LENGTH + 1, self->vars);
   if (var_index >= 0) return var_index;
 
   var_index = self->n_vars;
@@ -264,11 +264,11 @@ bool_expression_dump(BoolExpression *self)
 {
   if (!self || !self->expr) return;
 
-  printf("variables: ");
+  g_print("variables: ");
   guint i;
-  for (i = 0; i < self->n_vars; i++) printf("%d:%s, ", i, self->vars[i]);
+  for (i = 0; i < self->n_vars; i++) g_print("%d:%s, ", i, self->vars[i]);
 
-  printf("\nexpr:\n");
+  g_print("\nexpr:\n");
   BoolExpressionToken *token;
   for (i = 0; (token = g_list_nth_data(self->expr, i)); i++) {
     const char *desc;
@@ -289,12 +289,51 @@ bool_expression_dump(BoolExpression *self)
       desc = "UNEXPECTED TOKEN";
       break;
     }
-    printf("  type: %02X, id: %02d - %s\n", token->type, token->id, desc);
+    g_print("  type: %02X, id: %02d - %s\n", token->type, token->id, desc);
   }
 }
 
 int
 bool_expression_evaluate(BoolExpression *self, const gxflag variable_values)
 {
-  return 0;
+  stack *stack_instance = stack_new();
+  GList *expr = self->expr;
+  for (; expr != NULL; expr = expr->next) {
+    BoolExpressionToken *token = expr->data;
+    if (token->type == BOOL_EXPRESSION_TOKEN_VARIABLE) {
+      stack_push(stack_instance,
+                 GINT_TO_POINTER(gx_flag_is_set(variable_values, token->id)));
+    }
+    else if (token->type == BOOL_EXPRESSION_TOKEN_OPERATOR) {
+      if (stack_is_empty(stack_instance)) {
+        fprintf(stderr, "expression invalid\n");
+        stack_free(stack_instance);
+        return FALSE;
+      }
+      gboolean Q = GPOINTER_TO_INT(stack_pop(stack_instance));
+
+      if (stack_is_empty(stack_instance)) {
+        fprintf(stderr, "expression invalid\n");
+        stack_free(stack_instance);
+        return FALSE;
+      }
+      gboolean P = GPOINTER_TO_INT(stack_pop(stack_instance));
+      gboolean result = bool_operator_evaluate(P, (BoolOperator) token->id, Q);
+      stack_push(stack_instance, GINT_TO_POINTER(result));
+    }
+    else if (token->type == BOOL_EXPRESSION_TOKEN_TRUE) {
+      stack_push(stack_instance, GINT_TO_POINTER(TRUE));
+    }
+    else if (token->type == BOOL_EXPRESSION_TOKEN_FALSE) {
+      stack_push(stack_instance, GINT_TO_POINTER(FALSE));
+    }
+  }
+  if (stack_is_empty(stack_instance)) {
+    fprintf(stderr, "expression invalid\n");
+    stack_free(stack_instance);
+    return FALSE;
+  }
+  gboolean result = GPOINTER_TO_INT(stack_pop(stack_instance));
+  stack_free(stack_instance);
+  return result;
 }
