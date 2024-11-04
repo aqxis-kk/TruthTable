@@ -1,0 +1,38 @@
+/**
+ * @page token_syntaxes Token Syntaxes
+ *
+ * There are four types of tokens available with bool_expressions.c;
+ * - variables
+ * - literals
+ * - operators
+ * - parentheses
+ * .
+ * Whitespaces (\\t or ' ') are token separators.\n
+ * Separators are not necessary as long as the string follows these syntaxes,
+ *   but they can be added for human-readability.
+ *
+ * If a token starts with an alphabetical character or '_', and followed by
+ *   alpha-numerical characters or '_', it is understood as variables\n
+ * (~= [a-z,A-Z,_][a-z,A-Z,0-9,_]*).
+ *
+ * Tokens recognised as literals are as follows.
+ * - *TRUE*  - 1, \\T, \\t
+ * - *FALSE* - 0, \\F, \\f
+ *
+ * Tokens recognised as operators are as follows.
+ * - *NOT*  - !, ^, \\not
+ * - *AND*  - &, &&, *, \\and
+ * - *OR*   - |, ||, +, \\or
+ * - *NAND* - !&, ^&, !*, ^*, \\nand
+ * - *NOR*  - !|, ^|, !+, ^+, \\nor
+ * - *XOR*  - !=, ^=, \\xor
+ * - *XNOR* - ==, =, \\xnor
+ *
+ * Tokens recognised as parantheses are as follows.
+ * - *left paranthhesis*  - (, {, [
+ * - *right paranthhesis* - ), }, ]
+ * .
+ * Note that these tokens may or may not work correctly if mismatched
+ *   parantheses type e.g. (} were found.
+ *
+ */

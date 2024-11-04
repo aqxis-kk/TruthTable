@@ -1,0 +1,26 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 2
+---
+Language: Cpp
+#AllowShortCaseExpressionOnASingleLine: true
+
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AlignTrailingComments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: TopLevel
+BinPackParameters: false
+BreakBeforeBraces: Stroustrup
+BreakStringLiterals: true
+IndentPPDirectives: AfterHash
+PointerAlignment: Right
+ReferenceAlignment: Right
+SeparateDefinitionBlocks: Always
+SortIncludes: Never
+SpaceAfterCStyleCast: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
